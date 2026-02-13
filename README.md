@@ -1,18 +1,18 @@
-# 什么是 WebMCP 以及它能做什么？
+# 什么是 WebMCP？它能做什么？
 
 参考官方文档：[WebMCP Explainer](https://docs.google.com/document/d/1rtU1fRPS0bMqd9abMG_hc6K9OAI6soUy3Kh00toAgyk/edit?tab=t.0)
 
 以下是 WebMCP 应用于网站的一些示例：
 
-- 某航空公司的网站暴露了一个 `book_flight` 工具。AI Agent 可以直接通过该工具提交结构化的乘客数据，而不必去猜测该如何在航空公司那个为人类用户设计的日历 UI 上进行输入。
-- 复杂的医疗或法律门户网站将表单标注为 `submit_application` 工具。Agent 可以正确且即时地将数据映射到对应字段，而不会把数据重复填入错误的字段。例如，可以明确指示某个字段需要填写完整的法定姓名，还是分开的姓和名字段。
-- 开发者设置页面暴露了一个 `run_diagnostics` 工具，这样 Agent 就能直接触发诊断修复操作，而这些操作原本隐藏在层层嵌套的菜单之后。
+- 某航空公司的网站暴露了一个 `book_flight` 工具。AI Agent 可以直接通过该工具提交结构化的乘客数据，而不必去猜测该如何在那个为人类设计的日历 UI 上进行操作。
+- 复杂的医疗或法律门户网站将表单标注为 `submit_application` 工具。Agent 可以正确且即时地将数据映射到对应字段，而不会把数据重复填入错误的位置。例如，可以明确告知某个字段需要填写完整的法定姓名，还是分开的姓和名。
+- 开发者设置页面暴露了一个 `run_diagnostics` 工具，Agent 能直接触发诊断修复操作，而这些操作原本隐藏在层层嵌套的菜单之后。
 
-简单来说，WebMCP 的核心思路就是：让网站主动把自己的能力以"工具"的形式暴露给 AI Agent，这样 Agent 就不用像人一样去"看"页面、"猜"交互方式，而是直接通过结构化的接口完成操作，既准确又高效。
+一句话总结 WebMCP 的核心思路：让网站主动把自己的能力以"工具"的形式暴露给 AI Agent。这样 Agent 就不用像人一样去"看"页面、"猜"交互方式，而是直接通过结构化的接口完成操作——既准确，又高效。
 
 ---
 
-# 怎么才能用？
+# 怎么才能用上？
 
 ## 浏览器版本要求
 
@@ -34,37 +34,37 @@
 
 ![WebMCP Feature Flag 开关示意](web_mcp_flag.png)
 
-## 下载对应的插件
+## 安装配套插件
 
-Model Context Tool Inspector 插件，在刚安装好的金丝雀里安装：
+在刚装好的金丝雀浏览器里安装 Model Context Tool Inspector 插件：
 
 <https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd>
 
-## 访问对应的 Live Demo
+## 访问 Live Demo
 
 文档中列出了多个 Demo，入口在：
 
 <https://docs.google.com/document/d/1rtU1fRPS0bMqd9abMG_hc6K9OAI6soUy3Kh00toAgyk/edit?tab=t.0#heading=h.qq06bobgml10>
 
-比如飞机预定 Demo：<https://googlechromelabs.github.io/webmcp-tools/demos/react-flightsearch/>
+比如这个航班预订 Demo：<https://googlechromelabs.github.io/webmcp-tools/demos/react-flightsearch/>
 
-点击插件图标，侧边栏就能看到 Inspector 了。然后你应该就能看到：
+点击插件图标，侧边栏就能看到 Inspector 界面了：
 
 ![航班查询 Demo](flight_search.png)
 
-整过 MCP 的人，应该都能看懂是啥意思。
+整过 MCP 的人，应该一眼就能看懂这是啥意思。
 
 ---
 
-# 发生了啥？
+# 到底发生了啥？
 
-对于程序员来说，最好的解释就是不要解释，直接甩源代码，对吧？
+对于程序员来说，最好的解释就是不解释——直接甩源代码。
 
 源代码仓库：<https://github.com/GoogleChromeLabs/webmcp-tools/tree/main/demos/react-flightsearch>
 
 ## 🤖 Agent / WebMCP 集成
 
-本应用已做好与 AI Agent 协同工作的适配（例如通过浏览器扩展或专用浏览器）。它会检测 `navigator.modelContext` 是否存在，并注册以下工具：
+这个 Demo 已经做好了与 AI Agent 协同工作的适配（例如通过浏览器扩展或专用浏览器）。它会检测 `navigator.modelContext` 是否存在，并注册以下工具：
 
 - `searchFlights` — 使用结构化参数（出发地、目的地、日期等）发起航班搜索。
 - `listFlights` — 获取当前页面展示的航班列表（以编程方式访问数据）。
@@ -77,7 +77,7 @@ Model Context Tool Inspector 插件，在刚安装好的金丝雀里安装：
 
 具体实现详见 [`src/webmcp.ts`](https://github.com/GoogleChromeLabs/webmcp-tools/blob/main/demos/react-flightsearch/src/webmcp.ts)。
 
-简单的说就是在 `navigator.modelContext` 下注册点东西，加点料。
+说白了就是在 `navigator.modelContext` 下注册工具、定义 schema，仅此而已。
 
 ## 工具一览
 
@@ -94,7 +94,7 @@ Model Context Tool Inspector 插件，在刚安装好的金丝雀里安装：
 
 # 核心前端原理梳理
 
-把整个调用链路从头到尾捋一遍。
+下面把整个调用链路从头到尾捋一遍。
 
 ## 1. `searchFlights` 被 Agent 调用后
 
@@ -114,7 +114,7 @@ Agent 调用 searchFlights({ origin: "PEK", destination: "SHA", ... })
   → Agent 拿到这个字符串，知道搜索已成功发起
 ```
 
-简单说：Agent 告诉页面"我要搜从北京到上海的航班"，页面就像用户手动填表点搜索一样更新了。
+简单说：Agent 告诉页面"我要搜从北京到上海的航班"，页面就像用户手动填表点搜索一样完成了更新。
 
 ## 2. `listFlights` 被 Agent 调用后
 
@@ -124,7 +124,7 @@ Agent 调用 listFlights()
   → Agent 拿到一个 Flight[] 数组，包含所有航班的结构化数据
 ```
 
-这个最简单，没有事件派发，没有 UI 变化。纯粹是让 Agent 拿到数据，相当于给了 Agent 一个"读数据库"的能力。Agent 拿到数据后可以自己做分析、比较、推荐。
+这个最简单——没有事件派发，没有 UI 变化。纯粹是让 Agent 拿到数据，相当于给了它一个"读数据库"的能力。拿到数据后，Agent 可以自己做分析、比较、推荐。
 
 ## 3. `setFilters` 被 Agent 调用后
 
@@ -179,33 +179,42 @@ webmcp.ts
 AI Agent 拿到结果
 ```
 
-React 那边你可以简单理解为：`setState` 就是"改数据"，数据一改，React 自动把页面重新画一遍。所以 Agent 通过事件改了数据，页面就自动跟着变了，用户能实时看到 Agent 的操作结果。
+React 那边可以简单理解为：`setState` 就是"改数据"，数据一改，React 自动把页面重新画一遍。所以 Agent 通过事件改了数据，页面就自动跟着变了，用户能实时看到 Agent 的操作结果。
 
+---
 
-# 价值？
+# 价值在哪？
 
-感觉不用啰嗦了，就是再也不需要让brower-use那类工具去猜网页该怎么用了，直接把前端的调用链路拆出来，给AI说的明明白白的，你调用就好了，也别瞎折腾了
+不用啰嗦了。以后再也不需要让 browser-use 那类工具去猜网页该怎么用了——直接把前端的调用链路拆出来，给 AI 说得明明白白：你调用就好，别瞎折腾。
 
-这个东西其实就是一套约定，也就是说其实前端编程的时候，只需要把需要暴露的核心的API，给AI说明白了，然后用一个SKILL，把vue、react等等前端组件，包括裸js的写作规范写成一个SKILL，给AI说明怎么实现这套约定/协议，然后放在js里，注册好上下文和工具。
+这东西本质上就是一套约定。也就是说，前端开发的时候，只需要把需要暴露的核心 API 给 AI 说清楚，然后用一个 SKILL 把 Vue、React 等前端组件（包括裸 JS）的写作规范定义好，告诉 AI 怎么实现这套协议，注册好上下文和工具就行了。
 
-接着AI过来，只需要访问对应的注册工具后，就可以开始调用了
+接着 AI 过来，访问到注册好的工具，就可以直接开始调用。
 
-谷歌当下的玩法是，使用了一个谷歌插件，其实未来肯定会直接集成在游览器里面的...
+谷歌当下的玩法是通过一个 Chrome 插件来实现的，但未来这东西大概率会直接集成进浏览器本身。
 
-# 当下？脑洞
+---
 
-也就是说，其实我自己现在就可以写一整套的js+SKILL规范，然后自己写一个插件，用非gemeni的方式，也可以实现这一套东西
+# 当下的脑洞
 
-嗯，前日写的AI收藏夹插件其实就已经是一个非常好的样本了
+也就是说，其实我现在就可以自己写一整套 JS + SKILL 规范，再写一个插件，用非 Gemini 的方式，同样实现这一套东西。
 
-甚至！甚至可以用插件将，不是你自己的网站，也注入这一套东西，然后给AI sidecar去使用，说白了mcp就是SKILL的前身嘛
+嗯，前几天写的那个 AI 收藏夹插件，其实就已经是一个非常好的样本了。
 
-不过mcp确实介入的更深
+甚至——甚至可以用插件把不是你自己的网站也注入这一套东西，然后交给 AI sidecar 去使用。说白了，MCP 就是 SKILL 的前身嘛。
 
-# 类比？
+不过 MCP 确实介入得更深一些。
 
-其实就是类比与当年的iOS的快捷方式，相比也是类似的东西，可惜啊，快捷方式毁了，嗯~~~
+---
+
+# 类比
+
+其实可以类比当年 iOS 的"快捷指令"，思路是类似的——可惜快捷指令后来没做起来。嗯……
+
+---
 
 # 评价
 
-非常实用的东西，尤其对于复杂交互的网站：如电商、旅行预定这类，确实非常实用，把自己的接口直接暴露给AI了，当然商业逻辑，那是另外一个话题
+非常实用的东西，尤其对于复杂交互的网站——电商、旅行预订这类场景，确实很有价值。等于把自己的接口直接暴露给了 AI。
+
+当然，商业逻辑层面的考量，那是另一个话题了。
